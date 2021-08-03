@@ -16,7 +16,14 @@ class PostController extends Controller
      */
     public function index()
     {
-        return JsonResource::collection(Post::all())->response()->setStatusCode(200);
+        $getPosts = Post::all();
+
+        if (!$getPosts) return response()->json([
+            'status' => 404,
+            'message' => 'No posts have been found',
+        ])->setStatusCode(404);
+
+        return JsonResource::collection($getPosts)->response()->setStatusCode(200);
     }
 
     /**
@@ -60,7 +67,14 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        return response()->json(Post::find($post->id))->setStatusCode(200);
+        $showPost = Post::find($post->id);
+
+        if (!$showPost) return response()->json([
+            'status' => 404,
+            'message' => 'Post can not be found',
+        ])->setStatusCode(404);
+
+        return response()->json()->setStatusCode(200);
     }
 
     /**
@@ -107,7 +121,12 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        Post::find($post->id)->delete();
+        $deletePost = Post::find($post->id)->delete();
+
+        if (!$deletePost) return response()->json([
+            'status' => 404,
+            'message' => 'Post can not be found',
+        ])->setStatusCode(404);
 
         return response()->json([
             'status' => 200,
@@ -124,6 +143,11 @@ class PostController extends Controller
     public function enable($id): \Illuminate\Http\JsonResponse
     {
         $enablePost = Post::find($id);
+
+        if (!$enablePost) return response()->json([
+            'status' => 404,
+            'message' => 'Post can not be found',
+        ])->setStatusCode(404);
 
         $enablePost->enabled = 1;
 
@@ -144,16 +168,21 @@ class PostController extends Controller
      */
     public function disable($id): \Illuminate\Http\JsonResponse
     {
-        $enablePost = Post::find($id);
+        $disablePost = Post::find($id);
 
-        $enablePost->enabled = 0;
+        if (!$disablePost) return response()->json([
+            'status' => 404,
+            'message' => 'Post can not be found',
+        ])->setStatusCode(404);
 
-        $enablePost->save();
+        $disablePost->enabled = 0;
+
+        $disablePost->save();
 
         return response()->json([
             'status' => 200,
             'message' => 'Post has been disabled',
-            'post' => $enablePost
+            'post' => $disablePost
         ])->setStatusCode(200);
     }
 
