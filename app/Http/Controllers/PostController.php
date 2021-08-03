@@ -5,17 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Response;
 
 class PostController extends Controller
 {
     /**
      * Display a listing of all posts.
      *
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\AnonymousResourceCollection|object
      */
-    public function index(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    public function index()
     {
-        return JsonResource::collection(Post::all());
+        return JsonResource::collection(Post::all())->response()->setStatusCode(200);
     }
 
     /**
@@ -48,18 +49,18 @@ class PostController extends Controller
             'status' => 201,
             'message' => 'success',
             'post' => $newPost
-        ]);
+        ])->setStatusCode(201);
     }
 
     /**
      * Display the specified post.
      *
      * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\AnonymousResourceCollection|object
      */
     public function show(Post $post)
     {
-        return JsonResource::collection(Post::find($post->id));
+        return response()->json(Post::find($post->id))->setStatusCode(200);
     }
 
     /**
@@ -77,7 +78,7 @@ class PostController extends Controller
             return response()->json([
                 'status' => 405,
                 'message' => 'Slug is not allowed. Only lowercase characters, numbers and - _ are allowed'
-            ]);
+            ])->setStatusCode(405);
         }
 
         $updatePost = Post::find($post->id);
@@ -95,7 +96,7 @@ class PostController extends Controller
             'post' => [
                 $updatePost
             ]
-        ]);
+        ])->setStatusCode(200);
     }
 
     /**
@@ -111,7 +112,7 @@ class PostController extends Controller
         return response()->json([
             'status' => 200,
             'message' => 'Post has been deleted'
-        ]);
+        ])->setStatusCode(200);
     }
 
     /**
@@ -132,7 +133,7 @@ class PostController extends Controller
             'status' => 200,
             'message' => 'Post has been enabled',
             'post' => $enablePost
-        ]);
+        ])->setStatusCode(200);
     }
 
     /**
@@ -153,7 +154,7 @@ class PostController extends Controller
             'status' => 200,
             'message' => 'Post has been disabled',
             'post' => $enablePost
-        ]);
+        ])->setStatusCode(200);
     }
 
 
